@@ -3,22 +3,21 @@
 set -e -x
 
 # Kernel Source
-KERNEL_SOURCE=https://github.com/cd-Crypton/android_kernel_oplus_sm8350
-KERNEL_BRANCH=RMX3461
-KERNEL_DEFCONFIG=vendor/lahaina-gki_defconfig vendor/lahaina_GKI.config
+KERNEL_SOURCE=https://github.com/lazycodebuilder/android_kernel_realme_sdm710
+KERNEL_BRANCH=14
+KERNEL_DEFCONFIG=sdm670-perf_defconfig
 
-# Prebuilt Clang Toolchain (AOSP)
-CLANG_URL=https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12L-release/clang-r416183b.tar.gz
+# Prebuilt Proton Clang Toolchain
+CLANG=https://github.com/kdrag0n/proton-clang.git
+CLANG_BRANCH=master
 
-# Prebuilt GAS Utilities (AOSP)
-GAS=https://android.googlesource.com/platform/prebuilts/gas/linux-x86
-GAS_BRANCH=master-kernel-build-2021
 
 # Setup make Command
 make_fun() {
-  make O=out ARCH=arm64 LLVM=1 \
+  make O=out ARCH=arm64 CC=clang \
+       LLVM=1 LLVM_IAS=1 HOSTCFLAGS="-fuse-ld=lld -Wno-unused-command-line-argument" \
        CROSS_COMPILE=aarch64-linux-gnu- \
-       CROSS_COMPILE_COMPAT=arm-linux-gnueabi- "$@"
+       CROSS_COMPILE_ARM32=arm-linux-gnueabi- "$@"
 }
 
 # Work Path
@@ -35,12 +34,11 @@ mkdir -p "${WORK}"
 cd "${WORK}" || exit 1
 
 # Cloning all the Necessary files
-if [ ! -d clang ]; then mkdir clang && curl -Lsq "${CLANG_URL}" -o clang.tgz && tar -xzf clang.tgz -C clang; fi
-[ ! -d gas ] && git clone --depth=1 "${GAS}" -b "${GAS_BRANCH}" ./gas
+[ ! -d clang ] && git clone --depth=1 "${CLANG}" -b "${CLANG_BRANCH}" ./clang
 [ ! -d "${KERNEL}" ] && git clone --depth=1 "${KERNEL_SOURCE}" -b "${KERNEL_BRANCH}" "${KERNEL}"
 
 # Setting Toolchain Path
-PATH="${WORK}/clang/bin:${WORK}/gas:/bin"
+PATH="${WORK}/clang/bin"
 
 # Enter Kernel root directory
 cd "${KERNEL_SRC}" || exit 1
