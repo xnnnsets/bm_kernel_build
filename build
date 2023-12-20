@@ -11,11 +11,10 @@ KERNEL_DEFCONFIG=sdm670-perf_defconfig
 CLANG=https://github.com/kdrag0n/proton-clang.git
 CLANG_BRANCH=master
 
-
 # Setup make Command
 make_fun() {
   make O=out ARCH=arm64 CC=clang \
-       LLVM=1 LLVM_IAS=1 HOSTCFLAGS="-fuse-ld=lld -Wno-unused-command-line-argument" \
+       LLVM=1 LLVM_IAS=1 \
        CROSS_COMPILE=aarch64-linux-gnu- \
        CROSS_COMPILE_ARM32=arm-linux-gnueabi- "$@"
 }
@@ -38,7 +37,7 @@ cd "${WORK}" || exit 1
 [ ! -d "${KERNEL}" ] && git clone --depth=1 "${KERNEL_SOURCE}" -b "${KERNEL_BRANCH}" "${KERNEL}"
 
 # Setting Toolchain Path
-PATH="${WORK}/clang/bin"
+PATH="${WORK}/clang/bin:$PATH"
 
 # Enter Kernel root directory
 cd "${KERNEL_SRC}" || exit 1
