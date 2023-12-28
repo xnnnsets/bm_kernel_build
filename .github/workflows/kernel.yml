@@ -60,6 +60,8 @@ jobs:
       with:
         artifacts: |
           /home/runner/work/${{ env.KERNEL }}/out/arch/arm64/boot/Image.*
+          /home/runner/work/${{ env.KERNEL }}/out/arch/arm64/boot/dtbo.img
+          /home/runner/work/${{ env.KERNEL }}/out/arch/arm64/boot/dtb.img
           /home/runner/work/${{ env.KERNEL }}/build.log
         name: Compiled Kernel // ${{ steps.props.outputs.date }}
         draft: false
