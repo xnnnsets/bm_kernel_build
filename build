@@ -3,7 +3,7 @@
 set -e -x
 
 # Kernel Source
-KERNEL_SOURCE=https://github.com/lazycodebuilder/Recovery_kernel_sdm710
+KERNEL_SOURCE=https://github.com/lazycodebuilder/kernel_r3p_recovery
 KERNEL_BRANCH=14
 KERNEL_DEFCONFIG=sdm670-perf_defconfig
 
