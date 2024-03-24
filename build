@@ -3,8 +3,8 @@
 set -e -x
 
 # Kernel Source
-KERNEL_SOURCE=https://github.com/lazycodebuilder/kernel_r3p_recovery
-KERNEL_BRANCH=tp_test
+KERNEL_SOURCE=https://github.com/lazycodebuilder/recoverykernel_rmx1851.git
+KERNEL_BRANCH=test
 KERNEL_DEFCONFIG=sdm670-perf_defconfig
 
 # Prebuilt Proton Clang Toolchain
@@ -14,9 +14,9 @@ CLANG_BRANCH=master
 # Setup make Command
 make_fun() {
   make O=out ARCH=arm64 CC=clang \
-       LLVM=1 LLVM_IAS=1 \
-       CROSS_COMPILE=aarch64-linux-gnu- \
-       CROSS_COMPILE_ARM32=arm-linux-gnueabi- "$@"
+  LLVM=1 LLVM_IAS=1 \
+  CROSS_COMPILE=aarch64-linux-gnu- \
+  CROSS_COMPILE_ARM32=arm-linux-gnueabi- "$@"
 }
 
 # Work Path
