@@ -1,15 +1,19 @@
 name: Build Kernel
 
 on:
-  watch:
-    types: [started]
-    
   workflow_dispatch:
-
+    inputs:
+      GITCLEANUP:
+        description: 'cleanup/make more space'
+        required: false
+        default: 'false'
+        type: boolean
+        
 permissions:
   contents: write
 
 jobs:
+
   build:
     name: Build Kernel by ${{ github.actor }}
     runs-on: ubuntu-latest
@@ -18,10 +22,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
 
+    - name: Cleanup
+      if: github.event.inputs.GITCLEANUP == 'true'
+      uses: rokibhasansagar/slimhub_actions@v23.44.6
+
     - name: Build Environment
       run: |
         sudo apt-get update
-        sudo apt-get install git ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python2 python3
+        sudo apt-get install git ccache automake tar flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python2 python3
 
     - name: Compile Kernel
       run: |
@@ -50,12 +58,11 @@ jobs:
 
     - name: Release
       if: env.CHECK_FILE_IS_OK == 'true'
-      uses: ncipollo/release-action@v1.12.0
+      uses: ncipollo/release-action@v1.14.0
       with:
         artifacts: |
-          /home/runner/work/${{ env.KERNEL }}/out/arch/arm64/boot/Image.*
+          /home/runner/work/${{ env.KERNEL }}/out/arch/arm64/boot/Image*
           /home/runner/work/${{ env.KERNEL }}/out/arch/arm64/boot/dtbo.img
-          /home/runner/work/${{ env.KERNEL }}/out/arch/arm64/boot/dtb.img
           /home/runner/work/${{ env.KERNEL }}/build.log
         name: Compiled Kernel // ${{ steps.props.outputs.date }}
         draft: false
