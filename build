@@ -3,9 +3,9 @@
 set -e -x
 
 # Kernel Source
-KERNEL_SOURCE=https://github.com/lazycodebuilder/recoverykernel_rmx1851.git
-KERNEL_BRANCH=test
-KERNEL_DEFCONFIG=sdm670-perf_defconfig
+KERNEL_SOURCE=https://github.com/apisConn/android_kernel_samsung_a24.git
+KERNEL_BRANCH=OSRC
+KERNEL_DEFCONFIG=a24_defconfig
 
 # Prebuilt Proton Clang Toolchain
 CLANG=https://github.com/kdrag0n/proton-clang.git
