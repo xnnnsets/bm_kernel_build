@@ -45,8 +45,7 @@ PATH="${WORK}/clang/bin:$PATH"
 
 # Enter Kernel root directory
 cd "${KERNEL_SRC}" || exit 1
-curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
-
+curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v9.5.0
 # Configure kernel
 make_fun "${KERNEL_DEFCONFIG}"
 
