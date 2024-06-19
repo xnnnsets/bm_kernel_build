@@ -46,10 +46,6 @@ cd "${KERNEL_SRC}" || exit 1
 make_fun mrproper
 make_fun "${KERNEL_DEFCONFIG}"
 
-# Update ABI files
-make_fun abidiff
-make_fun abi_whitelist
-
 # Check and create abi_symbollist.raw if not exists
 ABI_FILE=${KERNEL_SRC}/out/abi_symbollist.raw
 if [ ! -f "${ABI_FILE}" ]; then
