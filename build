@@ -5,7 +5,7 @@ set -e -x
 # Kernel Source
 KERNEL_SOURCE=https://github.com/apisConn/android_kernel_samsung_a24.git
 KERNEL_BRANCH=OSRC
-KERNEL_DEFCONFIG=a24_defconfig
+KERNEL_DEFCONFIG=a24_00_defconfig
 
 # Prebuilt Proton Clang Toolchain
 CLANG=https://github.com/kdrag0n/proton-clang.git
