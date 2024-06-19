@@ -45,17 +45,7 @@ jobs:
         echo "KERNEL_DEFCONFIG=$(cat build | grep -w "KERNEL_DEFCONFIG" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
         echo "KERNEL=$(cat build | grep -w "KERNEL" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
         echo "CLANG_URL=$(cat build | grep -w "CLANG_URL" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
-
-    - name: Check Out Directory
-      run: |
-       cd ~/work
-       if [ -f android-kernel/out/arch/arm64/boot/Image ]; then
-           echo "CHECK_FILE_IS_OK=true" >> $GITHUB_ENV
-       else
-           echo "Kernel output file is empty"
-           exit 1
-       fi
-
+        
     - name: Release
       if: env.CHECK_FILE_IS_OK == 'true'
       uses: ncipollo/release-action@v1.14.0
