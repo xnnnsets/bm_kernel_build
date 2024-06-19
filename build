@@ -61,8 +61,8 @@ fi
 # Generate include/generated/autoksyms.h
 make_fun modules_prepare
 
-# Start Compiling Kernel
-make_fun -j"$(nproc --all)" 2>&1 | tee build.log || exit 1
+# Compile Kernel Image
+make_fun -j"$(nproc --all)" Image.gz-dtb 2>&1 | tee build.log || exit 1
 
 # Integrate with Android build system
 # Clone Android source code if not already present
@@ -79,6 +79,7 @@ source build/envsetup.sh
 lunch aosp_arm64-eng
 
 # Copy the compiled kernel image to the Android build directory
+mkdir -p "${ANDROID_SOURCE_DIR}/device/samsung/a24/kernel"
 cp "${KERNEL_SRC}/out/arch/arm64/boot/Image.gz-dtb" "${ANDROID_SOURCE_DIR}/device/samsung/a24/kernel"
 
 # Build the Android boot image
