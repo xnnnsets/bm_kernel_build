@@ -42,6 +42,10 @@ PATH="${WORK}/clang/bin:$PATH"
 # Enter Kernel root directory
 cd "${KERNEL_SRC}" || exit 1
 
+# Clean and configure kernel
+make_fun mrproper
+make_fun "${KERNEL_DEFCONFIG}"
+
 # Update ABI files
 make_fun abidiff
 make_fun abi_whitelist
@@ -51,10 +55,6 @@ ABI_FILE=${KERNEL_SRC}/out/abi_symbollist.raw
 if [ ! -f "${ABI_FILE}" ]; then
   touch "${ABI_FILE}"
 fi
-
-# Clean and configure kernel
-make_fun mrproper
-make_fun "${KERNEL_DEFCONFIG}"
 
 # Start Compiling Kernel
 make_fun -j"$(nproc --all)" 2>&1 | tee build.log || exit 1
