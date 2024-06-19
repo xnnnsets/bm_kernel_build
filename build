@@ -52,5 +52,8 @@ if [ ! -f "${ABI_FILE}" ]; then
   touch "${ABI_FILE}"
 fi
 
+# Generate include/generated/autoksyms.h
+make_fun modules_prepare
+
 # Start Compiling Kernel
 make_fun -j"$(nproc --all)" 2>&1 | tee build.log || exit 1
