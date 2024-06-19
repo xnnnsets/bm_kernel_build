@@ -52,6 +52,10 @@ if [ ! -f "${ABI_FILE}" ]; then
   touch "${ABI_FILE}"
 fi
 
+# Update ABI files
+make_fun abidiff || true
+make_fun abi_whitelist || true
+
 # Generate include/generated/autoksyms.h
 make_fun modules_prepare
 
