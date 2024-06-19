@@ -47,8 +47,7 @@ PATH="${WORK}/clang/bin:$PATH"
 cd "${KERNEL_SRC}" || exit 1
 curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
 
-# Clean and configure kernel
-make_fun mrproper
+# Configure kernel
 make_fun "${KERNEL_DEFCONFIG}"
 
 # Generate include/generated/autoksyms.h
