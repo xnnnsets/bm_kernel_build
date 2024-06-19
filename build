@@ -11,6 +11,10 @@ KERNEL_DEFCONFIG=a24_defconfig
 CLANG=https://github.com/kdrag0n/proton-clang.git
 CLANG_BRANCH=master
 
+# Android Build Environment
+ANDROID_SOURCE_DIR=${HOME}/android
+ANDROID_BRANCH=android-12.0.0_r1
+
 # Setup make Command
 make_fun() {
   make O=out ARCH=arm64 CC=clang \
@@ -59,3 +63,23 @@ make_fun modules_prepare
 
 # Start Compiling Kernel
 make_fun -j"$(nproc --all)" 2>&1 | tee build.log || exit 1
+
+# Integrate with Android build system
+# Clone Android source code if not already present
+if [ ! -d "${ANDROID_SOURCE_DIR}" ]; then
+  mkdir -p "${ANDROID_SOURCE_DIR}"
+  cd "${ANDROID_SOURCE_DIR}" || exit 1
+  repo init -u https://android.googlesource.com/platform/manifest -b "${ANDROID_BRANCH}"
+  repo sync -j"$(nproc --all)"
+fi
+
+# Set up the Android build environment
+cd "${ANDROID_SOURCE_DIR}" || exit 1
+source build/envsetup.sh
+lunch aosp_arm64-eng
+
+# Copy the compiled kernel image to the Android build directory
+cp "${KERNEL_SRC}/out/arch/arm64/boot/Image.gz-dtb" "${ANDROID_SOURCE_DIR}/device/samsung/a24/kernel"
+
+# Build the Android boot image
+make -j"$(nproc --all)" bootimage 2>&1 | tee bootimage.log || exit 1
