@@ -47,14 +47,12 @@ make_fun mrproper
 make_fun "${KERNEL_DEFCONFIG}"
 
 # Check and create abi_symbollist.raw if not exists
-ABI_FILE=${KERNEL_SRC}/out/abi_symbollist.raw
+ABI_DIR=${KERNEL_SRC}/out
+ABI_FILE=${ABI_DIR}/abi_symbollist.raw
 if [ ! -f "${ABI_FILE}" ]; then
+  mkdir -p "${ABI_DIR}"
   touch "${ABI_FILE}"
 fi
-
-# Update ABI files
-make_fun abidiff || true
-make_fun abi_whitelist || true
 
 # Generate include/generated/autoksyms.h
 make_fun modules_prepare
