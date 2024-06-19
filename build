@@ -1,11 +1,11 @@
 #!/bin/sh
 
-set -e -x
+set -ex
 
 # Kernel Source
-KERNEL_SOURCE=https://github.com/apisConn/android_kernel_samsung_a34x
-KERNEL_BRANCH=stock
-KERNEL_DEFCONFIG=a34x_defconfig
+KERNEL_SOURCE=https://github.com/xiaomi-mediatek-devs/android_kernel_xiaomi_mt6877
+KERNEL_BRANCH=lineage-21
+KERNEL_DEFCONFIG=ruby_defconfig
 
 # Prebuilt Proton Clang Toolchain
 CLANG=https://github.com/kdrag0n/proton-clang.git
@@ -45,42 +45,14 @@ PATH="${WORK}/clang/bin:$PATH"
 
 # Enter Kernel root directory
 cd "${KERNEL_SRC}" || exit 1
+curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
 
 # Clean and configure kernel
 make_fun mrproper
 make_fun "${KERNEL_DEFCONFIG}"
-
-# Check and create abi_symbollist.raw if not exists
-ABI_DIR=${KERNEL_SRC}/out
-ABI_FILE=${ABI_DIR}/abi_symbollist.raw
-if [ ! -f "${ABI_FILE}" ]; then
-  mkdir -p "${ABI_DIR}"
-  touch "${ABI_FILE}"
-fi
 
 # Generate include/generated/autoksyms.h
 make_fun modules_prepare
 
 # Compile Kernel Image
 make_fun -j"$(nproc --all)" Image.gz-dtb 2>&1 | tee build.log || exit 1
-
-# Integrate with Android build system
-# Clone Android source code if not already present
-if [ ! -d "${ANDROID_SOURCE_DIR}" ]; then
-  mkdir -p "${ANDROID_SOURCE_DIR}"
-  cd "${ANDROID_SOURCE_DIR}" || exit 1
-  repo init -u https://android.googlesource.com/platform/manifest -b "${ANDROID_BRANCH}"
-  repo sync -j"$(nproc --all)"
-fi
-
-# Set up the Android build environment
-cd "${ANDROID_SOURCE_DIR}" || exit 1
-source build/envsetup.sh
-lunch aosp_arm64-eng
-
-# Copy the compiled kernel image to the Android build directory
-mkdir -p "${ANDROID_SOURCE_DIR}/device/samsung/a24/kernel"
-cp "${KERNEL_SRC}/out/arch/arm64/boot/Image.gz-dtb" "${ANDROID_SOURCE_DIR}/device/samsung/a24/kernel"
-
-# Build the Android boot image
-make -j"$(nproc --all)" bootimage 2>&1 | tee bootimage.log || exit 1
