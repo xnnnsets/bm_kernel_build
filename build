@@ -3,9 +3,9 @@
 set -ex
 
 # Kernel Source
-KERNEL_SOURCE=https://github.com/xiaomi-mediatek-devs/android_kernel_xiaomi_mt6877
-KERNEL_BRANCH=lineage-21
-KERNEL_DEFCONFIG=ruby_defconfig
+KERNEL_SOURCE=https://github.com/xnnnsets/android_kernel_samsung_a34x
+KERNEL_BRANCH=sep-15.1/stock
+KERNEL_DEFCONFIG=a34x_defconfig
 
 # Prebuilt Proton Clang Toolchain
 CLANG=https://github.com/kdrag0n/proton-clang.git
@@ -13,7 +13,7 @@ CLANG_BRANCH=master
 
 # Android Build Environment
 ANDROID_SOURCE_DIR=${HOME}/android
-ANDROID_BRANCH=android-12.0.0_r1
+ANDROID_BRANCH=android-android-14
 
 # Setup make Command
 make_fun() {
@@ -27,7 +27,7 @@ make_fun() {
 WORK=${HOME}/work
 
 # Kernel Folder Name
-KERNEL=android-kernel
+KERNEL=android_kernel_samsung_a34x
 
 # Kernel Source Path
 KERNEL_SRC=${WORK}/${KERNEL}
@@ -42,15 +42,6 @@ cd "${WORK}" || exit 1
 
 # Setting Toolchain Path
 PATH="${WORK}/clang/bin:$PATH"
-
-# Enter Kernel root directory
-cd "${KERNEL_SRC}" || exit 1
-curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v9.5.0
-# Configure kernel
-make_fun "${KERNEL_DEFCONFIG}"
-
-# Generate include/generated/autoksyms.h
-make_fun modules_prepare
 
 # Compile Kernel Image
 make_fun -j"$(nproc --all)" Image.gz-dtb 2>&1 | tee build.log || exit 1
